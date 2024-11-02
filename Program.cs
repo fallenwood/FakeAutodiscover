@@ -8,7 +8,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+
+app.UseHealthChecks("/health");
+app.UseHealthChecks("/healthz");
 
 app.MapGet(
     "/autodiscover/autodiscover.json",
@@ -31,10 +36,7 @@ app.MapGet(
     await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new());
 });
 
-
-
 await app.RunAsync();
-
 
 public sealed class ActiveSyncResponse(
     string protocol = "ActiveSync",
