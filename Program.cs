@@ -49,10 +49,10 @@ async ValueTask AutoDiscoverActiveSyncAsync(
     var socketIp = context.Connection.RemoteIpAddress?.ToString();
     var headerIp = context.Request.Headers["X-Forwarded-For"];
 
-    var ipAddress = socketIp;
+    var ipAddress = headerIp;
     if (string.IsNullOrEmpty(ipAddress))
     {
-        ipAddress = headerIp.ToString();
+        ipAddress = socketIp?.ToString();
     }
 
     logger.LogInformation("Incoming request from '{IPAddress}' with email '{Email}' and protocl '{Protocol}'.", ipAddress, email, protocol);
