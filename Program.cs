@@ -17,7 +17,34 @@ app.UseHealthChecks("/healthz");
 
 app.MapGet(
     "/autodiscover/autodiscover.json",
-    async (HttpContext context, [FromQuery(Name = "Email")] string? email, [FromQuery(Name = "Protocol")] string? protocol, [FromServices] ILogger<Program> logger) =>
+    async (
+      HttpContext context,
+      [FromQuery(Name = "Email")] string? email,
+      [FromQuery(Name = "Protocol")] string? protocol,
+      [FromServices] ILogger<Program> logger) =>
+    {
+        await AutoDiscoverActiveSyncAsync(context, email, protocol, logger);
+    });
+
+app.MapGet(
+    "/autodiscover/autodiscover.json/v1.0/{email}",
+    async (
+      HttpContext context,
+      [FromRoute(Name = "email")] string? email,
+      [FromQuery(Name = "Protocol")] string? protocol,
+      [FromQuery(Name = "RedirectCount")] int redirectCount,
+      [FromServices] ILogger<Program> logger) =>
+    {
+        await AutoDiscoverActiveSyncAsync(context, email, protocol, logger);
+    });
+
+await app.RunAsync();
+
+async ValueTask AutoDiscoverActiveSyncAsync(
+    HttpContext context,
+    string? email,
+    string? protocol,
+    ILogger<Program> logger)
 {
     var socketIp = context.Connection.RemoteIpAddress?.ToString();
     var headerIp = context.Request.Headers["X-Forwarded-For"];
@@ -32,11 +59,9 @@ app.MapGet(
 
     context.Response.StatusCode = 200;
     context.Response.Headers.Append("X-Client-IPAddress", ipAddress);
-
     await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new());
-});
+}
 
-await app.RunAsync();
 
 public sealed class ActiveSyncResponse(
     string protocol = "ActiveSync",
