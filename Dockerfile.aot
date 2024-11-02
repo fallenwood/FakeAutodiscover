@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
+WORKDIR /src
+COPY . .
+RUN apt update -y && apt install curl xz-utils llvm -y
+RUN curl https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz -O && \
+  tar xf zig-linux-x86_64-0.13.0.tar.xz && \
+  mv zig-linux-x86_64-0.13.0 /usr/local && \
+  ln -s /usr/local/zig-linux-x86_64-0.13.0/zig /usr/local/bin/zig
+
+RUN dotnet publish -c Release -r linux-arm64
+
+FROM mcr.microsoft.com/azurelinux/distroless/base:3.0.20241005-arm64 as base
+WORKDIR /app
+EXPOSE 5000
+COPY --from=build /usr/src/myapp/target/aarch64-unknown-linux-musl/release/echo /app
+
+CMD ["./FakeAutodiscover"]

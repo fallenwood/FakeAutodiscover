@@ -5,11 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <PublishAot>true</PublishAot>
+    <PublishAot>false</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PublishAotCross" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
