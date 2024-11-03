@@ -16,6 +16,20 @@ jobs:
   steps:
   - checkout: self
 
+  # - task: Docker@2
+  #   inputs:
+  #     containerRegistry: 'docker hub'
+  #     repository: 'fallenwood/fakeautodiscover'
+  #     ${{ if eq(parameters.pipelineType, 'Official') }}:
+  #       displayName: 'Docker Build And Push'
+  #       command: 'buildAndPush'
+  #     ${{ if ne(parameters.pipelineType, 'Official') }}:
+  #       displayName: 'Docker Build'
+  #       command: 'build'
+  #     Dockerfile: '**/Dockerfile'
+  #     tags: |
+  #       $(tagArm)
+
   - task: Docker@2
     inputs:
       containerRegistry: 'docker hub'
@@ -26,6 +40,6 @@ jobs:
       ${{ if ne(parameters.pipelineType, 'Official') }}:
         displayName: 'Docker Build'
         command: 'build'
-      Dockerfile: '**/Dockerfile'
+      Dockerfile: '**/Dockerfile.aot'
       tags: |
-        $(tagArm)
+        $(tagArm)-aot
