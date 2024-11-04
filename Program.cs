@@ -40,7 +40,7 @@ app.MapGet(
 
 await app.RunAsync();
 
-async ValueTask AutoDiscoverActiveSyncAsync(
+async ValueTask AutoDiscoverAsync(
     HttpContext context,
     string? email,
     string? protocol,
@@ -59,13 +59,45 @@ async ValueTask AutoDiscoverActiveSyncAsync(
 
     context.Response.StatusCode = 200;
     context.Response.Headers.Append("X-Client-IPAddress", ipAddress);
-    await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new());
+
+    var task = protocol switch
+    {
+        "ActiveSync" => AutoDiscoverActiveSyncAsync(context, email, protocol, logger),
+        "OutlookGateway" => AutoDiscoverOutlookGatewayAsync(context, email, protocol, logger),
+        _ => NotFoundAsync(context, logger),
+    };
+
+    await task;
+}
+
+async ValueTask AutoDiscoverActiveSyncAsync(
+    HttpContext context,
+    string? email,
+    string? protocol,
+    ILogger<Program> logger)
+{
+    await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new(protocol: "OutlookGateway", url: "https://outlook.office365.com"));
 }
 
 
+async ValueTask AutoDiscoverOutlookGatewayAsync(
+    HttpContext context,
+    string? email,
+    string? protocol,
+    ILogger<Program> logger)
+{
+    await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new(protocol: "ActiveSync", url: "https://outlook.office365.com/Microsoft-Server-ActiveSync"));
+}
+
+async ValueTask NotFoundAsync(HttpContext context, ILogger<Program> logger)
+{
+    context.Response.StatusCode = 404;
+    await context.Response.WriteAsync("Not Found");
+}
+
 public sealed class ActiveSyncResponse(
-    string protocol = "ActiveSync",
-    string url = "https://outlook.office365.com/Microsoft-Server-ActiveSync")
+    string protocol,
+    string url)
 {
     [JsonPropertyName("Protocol")]
     public string Protocl { get; init; } = protocol;
