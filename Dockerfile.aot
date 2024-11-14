@@ -13,7 +13,7 @@ FROM mcr.microsoft.com/azurelinux/distroless/base:3.0.20241005-arm64 as base
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:80
 ENV ASPNETCORE_ENVIRONMENT=Production
-EXPOSE 5000
+EXPOSE 80
 COPY --from=build /src/output/FakeAutodiscover /app
 
 CMD ["./FakeAutodiscover"]
