@@ -55,7 +55,7 @@ async ValueTask AutoDiscoverActiveSyncAsync(
         ipAddress = socketIp?.ToString();
     }
 
-    logger.LogInformation("Incoming request from '{IPAddress}' with email '{Email}' and protocl '{Protocol}'.", ipAddress, email, protocol);
+    logger.LogInformation("Incoming request from '{IPAddress}' with email '{Email}' and protocol '{Protocol}'.", ipAddress, email, protocol);
 
     context.Response.StatusCode = 200;
     context.Response.Headers.Append("X-Client-IPAddress", ipAddress);
