@@ -57,9 +57,15 @@ async ValueTask AutoDiscoverActiveSyncAsync(
 
     logger.LogInformation("Incoming request from '{IPAddress}' with email '{Email}' and protocol '{Protocol}'.", ipAddress, email, protocol);
 
+    var url = protocol?.ToLower() switch {
+        "outlookgateway" => "https://outlook.office365.com",
+        "activesync" => "https://outlook.office365.com/Microsoft-Server-ActiveSync",
+        _ => string.Empty,
+    };
+
     context.Response.StatusCode = 200;
     context.Response.Headers.Append("X-Client-IPAddress", ipAddress);
-    await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new());
+    await context.Response.WriteAsJsonAsync<ActiveSyncResponse>(new(protocol: protocol, url: url));
 }
 
 

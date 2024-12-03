@@ -1,0 +1,15 @@
+FROM --platform=linux/arm64 mcr.microsoft.com/dotnet/sdk:9.0 as build
+WORKDIR /src
+COPY . .
+RUN apt update -y && apt install bash curl xz-utils llvm -y
+
+RUN dotnet publish -c Release -r linux-arm64 -o output
+
+FROM mcr.microsoft.com/azurelinux/distroless/base:3.0.20241101-arm64 as base
+WORKDIR /app
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 80
+COPY --from=build /src/output/FakeAutodiscover /app
+
+CMD ["./FakeAutodiscover"]
