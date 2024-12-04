@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fallenwood.PublishAotCross" Version="0.0.1" />
+    <PackageReference Include="Fallenwood.PublishAotCross" Version="0.0.6" />
   </ItemGroup>
 
 </Project>
