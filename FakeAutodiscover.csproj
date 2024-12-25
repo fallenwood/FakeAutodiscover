@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="Fallenwood.PublishAotCross" Version="0.1.0" />
+    <PackageReference Include="Fallenwood.PublishAotCross" Version="0.1.0" />
   </ItemGroup>
 
 </Project>
