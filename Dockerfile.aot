@@ -8,6 +8,7 @@ RUN curl https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz -O &
   ln -s /usr/local/zig-linux-x86_64-0.13.0/zig /usr/local/bin/zig
 
 RUN dotnet publish -c Release -r linux-arm64 -o output
+RUN rm output/*.dbg
 
 FROM mcr.microsoft.com/azurelinux/distroless/base:3.0.20241005-arm64 as base
 WORKDIR /app
